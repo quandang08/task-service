@@ -28,6 +28,8 @@ public class Task {
     @ElementCollection
     private List<String> tags = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TaskStatus status;
 
     private LocalDateTime deadline;
