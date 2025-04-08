@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -91,9 +92,9 @@ public class TaskController {
         UserDto user = userService.getUserProfile(token);
 
         //Chỉ vai trò admin được quyền cập nhật
-//        if (!user.getRole().equals("ROLE_ADMIN") && !taskService.isTaskOwner(id, user.getId())) {
-//            throw new UnauthorizedException("Bạn không có quyền sửa công việc này.");
-//        }
+        if (!user.getRole().equals("ROLE_ADMIN") && !taskService.isTaskOwner(id, user.getId())) {
+            throw new UnauthorizedException("Bạn không có quyền sửa công việc này.");
+        }
 
         Task updated = taskService.updateTask(id, task, user.getId());
         return ResponseEntity.ok(updated);
@@ -110,18 +111,17 @@ public class TaskController {
     }
 
     @PatchMapping("/{id}/complete")
-    public ResponseEntity<Void> completeTask(
+    public ResponseEntity<?> completeTask(
             @PathVariable Long id,
             @RequestHeader("Authorization") String token
     ) throws Exception {
         UserDto user = userService.getUserProfile(token);
 
-        // Kiểm tra người dùng có phải là người đã nhận công việc này không
-//        if (!taskService.isTaskAssignedToUser(id, user.getId())) {
-//            throw new UnauthorizedException("Bạn không thể hoàn thành công việc này.");
-//        }
+        if (!taskService.isTaskAssignedToUser(id, user.getId())) {
+            throw new UnauthorizedException("Bạn không thể hoàn thành công việc này.");
+        }
 
-        taskService.completeTask(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        String message = taskService.completeTask(id);
+        return ResponseEntity.ok(Map.of("message", message));
     }
 }

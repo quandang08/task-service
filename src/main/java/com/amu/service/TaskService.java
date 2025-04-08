@@ -21,7 +21,11 @@ public interface TaskService {
 
     List<Task> assignedUsersTask(Long userId, TaskStatus taskStatus) throws Exception;
 
-    void completeTask(Long taskId) throws Exception;
+    String completeTask(Long taskId) throws Exception;
+
+    boolean isTaskAssignedToUser(Long id, Long id1);
+
+    boolean isTaskOwner(Long id, Long id1);
 
     //Page<TaskResponse> searchTasks(String keyword, TaskStatus status, Long assigneeId, int page, int size);
     //Page<TaskResponse> getAllTask(TaskStatus status, int page, int size);

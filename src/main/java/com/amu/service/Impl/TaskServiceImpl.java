@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,7 +85,7 @@ public class TaskServiceImpl implements TaskService {
         Task task = getTaskById(id);
 
         boolean isOwner = task.getAssignedUserId() != null && task.getAssignedUserId().equals(user.getId());
-        boolean isAdmin = user.getRole().equalsIgnoreCase("ADMIN");
+        boolean isAdmin = user.getRole().equalsIgnoreCase("ROLE_ADMIN");
 
         if (!isOwner && !isAdmin) {
             throw new Exception("Bạn không có quyền xóa task này.");
@@ -105,7 +106,6 @@ public class TaskServiceImpl implements TaskService {
 
         return taskRepository.save(task);
     }
-
 
     @Override
     public List<Task> assignedUsersTask(Long userId, TaskStatus taskStatus) throws Exception {
@@ -128,7 +128,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void completeTask(Long taskId) throws Exception {
+    public String completeTask(Long taskId) throws Exception {
         Task task = getTaskById(taskId);
         // Kiểm tra trạng thái task
         if (task.getStatus() == TaskStatus.DONE) {
@@ -141,5 +141,27 @@ public class TaskServiceImpl implements TaskService {
         // Cập nhật trạng thái task thành DONE
         task.setStatus(TaskStatus.DONE);
         taskRepository.save(task);
+        return null;
+    }
+
+    @Override
+    public boolean isTaskAssignedToUser(Long taskId, Long userId) {
+        Optional<Task> taskOpt = taskRepository.findById(taskId);
+        if (taskOpt.isEmpty()) return false;
+        Task task = taskOpt.get();
+        return task.getAssignedUserId() != null && task.getAssignedUserId().equals(userId);
+    }
+
+    @Override
+    public boolean isTaskOwner(Long taskId, Long userId) {
+        Optional<Task> optionalTask = taskRepository.findById(taskId);
+
+        if (optionalTask.isEmpty()) {
+            return false;
+        }
+
+        Task task = optionalTask.get();
+
+        return task.getAssignedUserId() != null && task.getAssignedUserId().equals(userId);
     }
 }
