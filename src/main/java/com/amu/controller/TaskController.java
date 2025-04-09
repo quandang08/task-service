@@ -122,7 +122,9 @@ public class TaskController {
         }
 
         String message = taskService.completeTask(id);
-        return ResponseEntity.ok(Map.of("message", message));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(Map.of("message", message));
     }
 
     @PutMapping("/{id}/status")
