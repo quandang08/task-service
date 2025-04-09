@@ -110,7 +110,7 @@ public class TaskController {
         return ResponseEntity.ok("Xóa task thành công.");
     }
 
-    @PatchMapping("/{id}/complete")
+    @PutMapping("/{id}/complete")
     public ResponseEntity<?> completeTask(
             @PathVariable Long id,
             @RequestHeader("Authorization") String token
@@ -123,5 +123,14 @@ public class TaskController {
 
         String message = taskService.completeTask(id);
         return ResponseEntity.ok(Map.of("message", message));
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateTaskStatus(
+            @PathVariable Long id,
+            @RequestParam String status
+    ) {
+        taskService.changeTaskStatus(id, status);
+        return ResponseEntity.ok(Map.of("message", "Cập nhật trạng thái thành công"));
     }
 }

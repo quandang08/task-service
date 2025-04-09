@@ -27,6 +27,8 @@ public interface TaskService {
 
     boolean isTaskOwner(Long id, Long id1);
 
+    void changeTaskStatus(Long id, String status);
+
     //Page<TaskResponse> searchTasks(String keyword, TaskStatus status, Long assigneeId, int page, int size);
     //Page<TaskResponse> getAllTask(TaskStatus status, int page, int size);
 }

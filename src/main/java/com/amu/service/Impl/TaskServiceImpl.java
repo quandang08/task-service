@@ -7,10 +7,11 @@ import com.amu.exception.ForbiddenException;
 import com.amu.repositories.TaskRepository;
 import com.amu.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -163,5 +164,14 @@ public class TaskServiceImpl implements TaskService {
         Task task = optionalTask.get();
 
         return task.getAssignedUserId() != null && task.getAssignedUserId().equals(userId);
+    }
+
+    @Override
+    public void changeTaskStatus(Long id, String status) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task không tồn tại"));
+
+        task.setStatus(TaskStatus.valueOf(status));
+        taskRepository.save(task);
     }
 }
